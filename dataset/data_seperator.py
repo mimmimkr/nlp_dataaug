@@ -7,13 +7,13 @@ def  copytraindata(type):
     if(type == 'p'):
         seperate = 'pos/'
     path = 'nlp_dataaug/dataset/'
-    data_org = os.listdir('nlp_dataaug/dataset/txt_sentoken/'+seperate)
+    data_org = os.listdir(path+'/txt_sentoken/'+seperate)
 
     #calc proportion/ amount for test and training set
     trainingsize=int(len(data_org)*0.8)
     orgpath = path+'/txt_sentoken/'+seperate
-    destpath_train = 'nlp_dataaug/dataset/trainingset/'+seperate
-    destpath_test=  'nlp_dataaug/dataset/testset/'+seperate
+    destpath_train =path+'/trainingset/'+seperate
+    destpath_test= path +'/testset/'+seperate
 
     #select files in range of trainingsize,  copy& move them to new folder
     print(trainingsize)
