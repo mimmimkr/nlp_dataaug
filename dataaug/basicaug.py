@@ -27,6 +27,10 @@ def basic_aug(i, augtype):
         aug = nac.OcrAug()
     if(augtype == 'rndw_swap'):
         aug = naw.RandomWordAug(action='swap')
+    if(augtype == 'syn'):
+        aug = naw.SynonymAug()
+    if(augtype == 'spell'):
+        aug= naw.SpellingAug()
     augmented_text = aug.augment(X[i].decode('utf-8'))
         
     print("Original:")
@@ -46,4 +50,4 @@ def write_vars_to_file(augfolder):
            file.write(basic_aug(af, augfolder))
     
 #write_vars_to_file('basic')
-write_vars_to_file('rndw_swap')
+write_vars_to_file('spell')
