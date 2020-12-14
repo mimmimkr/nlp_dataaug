@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from sklearn.datasets import load_files
 
 #IMPORT DATA
-movie_data = load_files(r".\dataset\txt_sentoken")
+movie_data = load_files(r".\dataset\testset")
 #target y, neg and pos in X
 X, y = movie_data.data, movie_data.target
 

@@ -6,11 +6,11 @@ def  copytraindata(type):
         seperate = 'neg/'
     if(type == 'p'):
         seperate = 'pos/'
-    path = 'nlp_dataaug/dataset/'
+    path = './dataset'
     data_org = os.listdir(path+'/txt_sentoken/'+seperate)
 
     #calc proportion/ amount for test and training set
-    trainingsize=int(len(data_org)*0.8)
+    trainingsize=int(len(data_org)*0.9)
     orgpath = path+'/txt_sentoken/'+seperate
     destpath_train =path+'/trainingset/'+seperate
     destpath_test= path +'/testset/'+seperate

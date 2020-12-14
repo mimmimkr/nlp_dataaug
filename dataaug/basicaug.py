@@ -46,8 +46,8 @@ def write_vars_to_file(augfolder):
         filepath = data.filenames[af].split('\\')
         classname = filepath[3]
         filename = filepath[4]
-        with open('./dataset_aug/'+augfolder+'/'+classname+'/'+filename, "w") as file:
+        with open('./dataset_aug/'+augfolder+'/'+classname+'/'+'_aug'+filename, "w") as file:
            file.write(basic_aug(af, augfolder))
     
 #write_vars_to_file('basic')
-write_vars_to_file('spell')
+write_vars_to_file('basic')
