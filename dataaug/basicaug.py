@@ -13,8 +13,12 @@ dataaugtype = 'basic'
 print (X[1])
 print('sds')
 print(data.filenames[1])
-
+sentences = []
 def basic_aug(i, augtype):
+    augsentences = []
+    print(len(X[i].decode('utf-8')))
+    sentences= X[i].decode('utf-8').split('\n')
+
     #data aug on first review
         #aug1 = nac.KeyboardAug()
     if (augtype == 'basic'):
@@ -31,17 +35,23 @@ def basic_aug(i, augtype):
         aug = naw.SynonymAug()
     if(augtype == 'spell'):
         aug= naw.SpellingAug()
+    for x in range(len(sentences)):
+        print(sentences[x])
+        augsentence = aug.augment(sentences[x])
+        augsentences.append(augsentence)
+        print(augsentences)
     augmented_text = aug.augment(X[i].decode('utf-8'))
         
-    print("Original:")
-    print(X[i].decode('utf-8'))
-    print("Augmented Text:")
-    print(augmented_text)
-    return augmented_text
+    #print("Original:")
+    #print(X[i].decode('utf-8'))
+    #print("Augmented Text:")
+    #print(augmented_text)
+    return ' '.join(augsentences)
 
 
 def write_vars_to_file(augfolder):
     for af in range(len(X)):
+        #len(X)
         #get info from current file
         filepath = data.filenames[af].split('\\')
         classname = filepath[3]
