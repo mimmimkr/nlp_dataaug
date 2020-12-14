@@ -50,4 +50,4 @@ def write_vars_to_file(augfolder):
            file.write(basic_aug(af, augfolder))
     
 #write_vars_to_file('basic')
-write_vars_to_file('basic')
+write_vars_to_file('syn')

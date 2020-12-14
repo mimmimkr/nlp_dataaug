@@ -2,6 +2,7 @@ import numpy as np
 import re
 import nltk
 from sklearn.datasets import load_files
+from sklearn.model_selection import train_test_split
 import pickle
 nltk.download('stopwords')
 from sklearn.ensemble import RandomForestClassifier
@@ -13,11 +14,12 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.ensemble import VotingClassifier
 
-movie_data_train = load_files(r".\dataset\trainingset")
+movie_data_train = load_files(r".\dataset_aug\basic")
 X, y = movie_data_train.data, movie_data_train.target
 
 movie_data_test = load_files(r".\dataset\testset")
-X_test, y_test = movie_data_test.data, movie_data_test.target
+X_test_whole, y_test_whole = movie_data_test.data, movie_data_test.target
+
 
 documents = []
 documents_t = []
@@ -49,10 +51,10 @@ for sen in range(0, len(X)):
     document = ' '.join(document)
     
     documents.append(document)
-
-for sen in range(0, len(X_test)):
+#my brains too broken to do it efficiently rn so its gonna be copy paste
+for sen in range(0, len(X_test_whole)):
         # Remove all the special characters
-    document_t = re.sub(r'\W', ' ', str(X_test[sen]))
+    document_t = re.sub(r'\W', ' ', str(X_test_whole[sen]))
     
     # remove all single characters
     document_t = re.sub(r'\s+[a-zA-Z]\s+', ' ', document_t)
@@ -79,15 +81,17 @@ for sen in range(0, len(X_test)):
 
 vectorizer = CountVectorizer(max_features=1500, min_df=5, max_df=0.7, stop_words=stopwords.words('english'))
 X = vectorizer.fit_transform(documents).toarray()
-X_test = vectorizer.fit_transform(documents_t).toarray()
+X_test_whole = vectorizer.fit_transform(documents_t).toarray()
 
 tfidfconverter = TfidfTransformer()
 X = tfidfconverter.fit_transform(X).toarray()
-X_test = tfidfconverter.fit_transform(X_test).toarray()
+X_test_whole = tfidfconverter.fit_transform(X_test_whole).toarray()
 
 tfidfconverter = TfidfVectorizer(max_features=1500, min_df=5, max_df=0.7, stop_words=stopwords.words('english'))
 X = tfidfconverter.fit_transform(documents).toarray()
-X_test = tfidfconverter.fit_transform(documents_t).toarray()
+X_test_whole = tfidfconverter.fit_transform(documents_t).toarray()
+
+X_am, X_test, y_am, y_test = train_test_split(X_test_whole, y_test_whole, test_size=0.5, random_state=0)
 
 classifier = RandomForestClassifier(n_estimators=1000, random_state=0)
 classifier.fit(X, y) 
