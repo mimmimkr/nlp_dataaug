@@ -23,16 +23,24 @@ import nlpaug.augmenter.sentence as nas
 #movie_data_aug = load_files(r".\dataset_aug\syn")
 #X_aug, y_aug = movie_data_aug.data, movie_data_aug.target
 
-movie_data_train = load_files(r".\dataset\minibatch")
+movie_data_train = load_files(r".\dataset\trainingset")
 X, y = movie_data_train.data, movie_data_train.target
 
+movie_data_test = load_files(r".\dataset\testset")
+X_test, y_test = movie_data_test.data, movie_data_test.target
+
+#X,y = X_train+X_aug, y_train+y_aug
+
+#movie_data_test = load_files(r".\dataset\testset")
+#X_test, y_test = movie_data_test.data, movie_data_test.target
+
+augsentences = []
 documents = []
 documents_t = []
 stemmer = WordNetLemmatizer()
 
 for sen in range(0, len(X)):
-
-     # Remove all the special characters
+        # Remove all the special characters
     document = re.sub(r'\W', ' ', str(X[sen]))
     
     # remove all single characters
@@ -47,59 +55,66 @@ for sen in range(0, len(X)):
     # Removing prefixed 'b'
     document = re.sub(r'^b\s+', '', document)
     
-
     # Converting to Lowercase
     document = document.lower()
 
-    #aug
-    aug = naw.SynonymAug()
-    augmented_text = aug.augment(document)
-    print('augtext', augmented_text)
-    document_aug = augmented_text
-    #y=np.insert(y,y[sen],1)
     # Lemmatization
     document = document.split()
 
     document = [stemmer.lemmatize(word) for word in document]
     document = ' '.join(document)
     
-    if sen < 20:
-        documents.append(document)
-    else:
-        y = y[:len(X)-24]
+    documents.append(document)
 
+for sen in range(0, len(X_test)):
+        # Remove all the special characters
+    document_t = re.sub(r'\W', ' ', str(X_test[sen]))
     
+    # remove all single characters
+    document_t = re.sub(r'\s+[a-zA-Z]\s+', ' ', document_t)
+    
+    # Remove single characters from the start
+    document_t = re.sub(r'\^[a-zA-Z]\s+', ' ', document_t) 
+    
+    # Substituting multiple spaces with single space
+    document_t = re.sub(r'\s+', ' ', document_t, flags=re.I)
+    
+    # Removing prefixed 'b'
+    document_t = re.sub(r'^b\s+', '', document_t)
+    
+    # Converting to Lowercase
+    document_t = document_t.lower()
+    
+    # Lemmatization
+    document_t = document_t.split()
 
-#X_woa, y_woa = movie_data_train.data, movie_data_train.target
-#X_woa, y_woa = list(range(1,20))
-#print('new data excluding augmentation', X_woa)
-
+    document_t = [stemmer.lemmatize(word) for word in document_t]
+    document_t = ' '.join(document_t)
+    
+    documents_t.append(document_t)
 
 vectorizer = CountVectorizer(max_features=1500, min_df=5, max_df=0.7, stop_words=stopwords.words('english'))
 X = vectorizer.fit_transform(documents).toarray()
-#X_woa = vectorizer.fit_transform(documents_t).toarray()
+X_test = vectorizer.fit_transform(documents_t).toarray()
 
 tfidfconverter = TfidfTransformer()
 X = tfidfconverter.fit_transform(X).toarray()
-#X_woa = tfidfconverter.fit_transform(X_woa).toarray()
+X_test = tfidfconverter.fit_transform(X_test).toarray()
 
 tfidfconverter = TfidfVectorizer(max_features=1500, min_df=5, max_df=0.7, stop_words=stopwords.words('english'))
 X = tfidfconverter.fit_transform(documents).toarray()
-#X_woa = tfidfconverter.fit_transform(documents_t).toarray()
+X_test = tfidfconverter.fit_transform(documents_t).toarray()
 
-X_woa,y_woa = X[20:], y[20:]
-#X_train, X_test, y_train, y_test = train_test_split(X_woa, y_woa, test_size=0.2, random_state=0)
-#use test split whole data without aug
-#use train with aug
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
 classifier = RandomForestClassifier(n_estimators=1000, random_state=0)
 classifier.fit(X, y) 
 
-y_pred = classifier.predict(X_woa)
+y_pred = classifier.predict(X_test)
 
-print(confusion_matrix(y_woa,y_pred))
-print(classification_report(y_woa,y_pred))
-print(accuracy_score(y_woa, y_pred))
+print(confusion_matrix(y_test,y_pred))
+print(classification_report(y_test,y_pred))
+print(accuracy_score(y_test, y_pred))
 
 with open('text_classifier', 'wb') as picklefile:
     pickle.dump(classifier,picklefile)
